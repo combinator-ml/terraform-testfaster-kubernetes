@@ -27,13 +27,18 @@ variable "preload_docker_images" {
   default = []
 }
 
+variable "prewarm_script" {
+  type = string
+  default = ""
+}
+
 variable "kubernetes_version" {
   type = string
   default = "v1.18.3" // set to "" to disable k8s provisioning
 }
 
 variable "cpus" {
-  type = integer
+  type = number
   default = 2
 }
 
@@ -48,12 +53,12 @@ variable "disk" {
 }
 
 variable "prewarm_pool_size" {
-  type = integer
+  type = number
   default = 1
 }
 
 variable "max_pool_size" {
-  type = integer
+  type = number
   default = 2
 }
 

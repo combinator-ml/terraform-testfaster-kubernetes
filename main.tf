@@ -4,8 +4,8 @@ kubernetes cluster of a given version, implicitly creating a pool of the given
 configuration.
 */
 
-resource "random_string" "random" {
-  length           = 16
+resource "random_id" "random" {
+  byte_length = 8
 }
 
 resource "local_file" "testfaster_yaml" {
@@ -28,20 +28,20 @@ resource "local_file" "testfaster_yaml" {
       "max_pool_size": var.max_pool_size,
       "default_lease_timeout": var.default_lease_timeout,
     })
-    filename = "${path.module}/${random_string.random}/.testfaster.yml"
+    filename = "${path.module}/${random_id.random.hex}/.testfaster.yml"
 }
 
 resource "null_resource" "testfaster_vm" {
     depends_on = [local_file.testfaster_yaml]
     provisioner "local-exec" {
         command = <<-EOT
-            cd ${path.module}/${random_string.random}
+            cd ${path.module}/${random_id.random.hex}
             mkdir -p bin
             curl -sSL -o ./bin/testctl \
                 https://storage.googleapis.com/get-faster-ci/$(uname -sm |sed 's/ /-/')/testctl
-            chmod +x /usr/local/bin/testctl
-            bin/testctl login --token ${var.testfaster_token}
-            bin/testctl get
+            chmod +x ./bin/testctl
+            ./bin/testctl login --token ${var.testfaster_token}
+            ./bin/testctl get
         EOT
     }
 }
