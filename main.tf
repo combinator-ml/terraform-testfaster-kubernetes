@@ -5,7 +5,7 @@ configuration.
 */
 
 resource "random_id" "random" {
-  byte_length = 8
+    byte_length = 8
 }
 
 resource "local_file" "testfaster_yaml" {
@@ -44,4 +44,9 @@ resource "null_resource" "testfaster_vm" {
             ./bin/testctl get
         EOT
     }
+}
+
+output "kubeconfig" {
+    value = file("${path.module}/${random_id.random.hex}/kubeconfig")
+    depends_on = [null_resource.testfaster_vm]
 }
