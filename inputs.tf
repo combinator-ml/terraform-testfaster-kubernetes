@@ -14,7 +14,7 @@ variable "kernel_image" {
 
 variable "os_dockerfile" {
   type = string
-  default = "FROM quay.io/testfaster/kube-ubuntu"
+  default = "FROM quay.io/testfaster/kube-ubuntu\nRUN apt-get update && apt-get install -y socat"
 }
 
 variable "docker_bake_script" {
