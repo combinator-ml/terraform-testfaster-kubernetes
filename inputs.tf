@@ -39,12 +39,12 @@ variable "kubernetes_version" {
 
 variable "cpus" {
   type = number
-  default = 2
+  default = 4
 }
 
 variable "memory" {
   type = string
-  default = "4GB"
+  default = "8GB"
 }
 
 variable "disk" {
