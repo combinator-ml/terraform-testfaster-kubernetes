@@ -40,7 +40,7 @@ resource "null_resource" "testfaster_vm" {
             curl -sSL -o ./bin/testctl \
                 https://storage.googleapis.com/get-faster-ci/$(uname -sm |sed 's/ /-/')/testctl
             chmod +x ./bin/testctl
-            ./bin/testctl login --token ${var.testfaster_token}
+            ./bin/testctl login --token ${var.testfaster_token} --endpoint ${var.testfaster_endpoint}
             ./bin/testctl get
         EOT
     }

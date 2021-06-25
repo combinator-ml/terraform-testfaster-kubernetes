@@ -7,6 +7,11 @@ variable "testfaster_token" {
   type = string
 }
 
+variable "testfaster_endpoint" {
+  type = string
+  default = "https://testfaster.ci"
+}
+
 variable "kernel_image" {
   type = string
   default = "quay.io/testfaster/ignite-kernel"
