@@ -46,7 +46,12 @@ resource "null_resource" "testfaster_vm" {
     }
 }
 
+data "local_file" "kubeconfig" {
+    filename = "${path.module}/${random_id.random.hex}/kubeconfig"
+    depends_on = [null_resource.testfaster_vm]
+}
+
 output "kubeconfig" {
-    value = file("${path.module}/${random_id.random.hex}/kubeconfig")
+    value = data.local_file.kubeconfig.content
     depends_on = [null_resource.testfaster_vm]
 }
