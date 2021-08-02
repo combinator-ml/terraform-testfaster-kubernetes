@@ -31,27 +31,26 @@ resource "local_file" "testfaster_yaml" {
     filename = "${path.module}/${random_id.random.hex}/.testfaster.yml"
 }
 
-resource "null_resource" "testfaster_vm" {
-    depends_on = [local_file.testfaster_yaml]
-    provisioner "local-exec" {
-        command = <<-EOT
-            cd ${path.module}/${random_id.random.hex}
-            mkdir -p bin
-            curl -sSL -o ./bin/testctl \
-                https://storage.googleapis.com/get-faster-ci/$(uname -sm |sed 's/ /-/')/testctl
-            chmod +x ./bin/testctl
-            ./bin/testctl login --token ${var.testfaster_token} --endpoint ${var.testfaster_endpoint}
-            ./bin/testctl get --name vm-${random_id.random.hex} --endpoint ${var.testfaster_endpoint}
-        EOT
-    }
-}
-
-data "local_file" "kubeconfig" {
-    filename = "${path.module}/${random_id.random.hex}/kubeconfig"
-    depends_on = [null_resource.testfaster_vm]
+module "testfaster" {
+    source  = "matti/resource/shell"
+    depends = [local_file.testfaster_yaml]
+    command = <<-EOT
+        set -euo pipefail
+        (
+         set -euo pipefail
+         cd ${path.module}/${random_id.random.hex}
+         mkdir -p bin
+         curl -sSL -o ./bin/testctl \
+            https://storage.googleapis.com/get-faster-ci/$(uname -sm |sed 's/ /-/')/testctl
+         chmod +x ./bin/testctl
+         ./bin/testctl login --token ${var.testfaster_token} --endpoint ${var.testfaster_endpoint}
+         ./bin/testctl get --name vm-${random_id.random.hex} --endpoint ${var.testfaster_endpoint}
+        ) 1>&2
+        cd ${path.module}/${random_id.random.hex}
+        cat kubeconfig
+    EOT
 }
 
 output "kubeconfig" {
-    value = data.local_file.kubeconfig.content
-    depends_on = [null_resource.testfaster_vm]
+    value = module.testfaster.stdout
 }
