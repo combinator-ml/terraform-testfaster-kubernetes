@@ -51,6 +51,6 @@ module "testfaster" {
     EOT
 }
 
-output "kubeconfig" {
+output "kubeconfig_contents" {
     value = module.testfaster.stdout
 }
